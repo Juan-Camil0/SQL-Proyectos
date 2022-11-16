@@ -64,28 +64,98 @@ INSERT INTO empleados VALUES ('737.689','Mario Llano','M','1945-08-30','1990-05-
 INSERT INTO empleados VALUES ('768.782','Joaquín Rosas','M','1947-07-07','1990-05-16',2250000,2500000,'Vendedor','31.178.144','2200');
 INSERT INTO empleados VALUES ('888.888','Iván Duarte','M','1955-08-12','1998-05-16',1050000,200000,'Mecánico','333.333.333','4100');
 
-/*1. Obtener los datos completos de los empleados.
-2. Obtener los datos completos de los departamentos
-3. Obtener los datos de los empleados con cargo 'Secretaria'.
-4. Obtener el nombre y salario de los empleados.
-5. Obtener los datos de los empleados vendedores, ordenado por nombre.
-6. Listar el nombre de los departamentos
-7. Obtener el nombre y cargo de todos los empleados, ordenado por salario
-8. Listar los salarios y comisiones de los empleados del departamento 2000, ordenado por comisión
-9. Listar todas las comisiones
-10. Obtener el valor total a pagar que resulta de sumar a los empleados del departamento 3000 una
-bonificación de 500.000, en orden alfabético del empleado
-11. Obtener la lista de los empleados que ganan una comisión superior a su sueldo.
-12. Listar los empleados cuya comisión es menor o igual que el 30% de su sueldo.*/
+--1. Obtener los datos completos de los empleados.*/
 SELECT * FROM empleados;
+--2. Obtener los datos completos de los departamentos
 SELECT * FROM departamentos;
+--3.Obtener los datos de los empleados con cargo 'Secretaria';
 SELECT * FROM empleados WHERE lower(cargoE)='secretaria';
+--4.Obtener el nombre y salario de los empleados.
 SELECT nomEmp, salEmp FROM empleados;
-SELECT * FROM empleados WHERE lower(cargoE)='vendedor' order by nomEmp;
+--5.Obtener los datos de los empleados vendedores, ordenado por nombre.
+SELECT * FROM empleados WHERE lower(cargoE)='vendedor' ORDER BY nomEmp;
+--6.Listar el nombre de los departamentos
 SELECT nombreDpto FROM departamentos 
 SELECT distinct nombreDpto FROM departamentos /* llama la lista sin repetir el string de la columna*/
-SELECT nomEmp, cargoE, salEmp From empleados order by salEmp desc;
+--7.Obtener el nombre y cargo de todos los empleados, ordenado por salario
+SELECT nomEmp, cargoE, salEmp From empleados ORDER BY salEmp DESC;
+--8.Listar los salarios y comisiones de los empleados del departamento 2000, ordenado por comisión
 SELECT nomEmp,salEmp,comisionE FROM empleados WHERE codDepto=2000 ORDER BY comisionE ASC;
+--9.Listar todas las comisiones
 SELECT distinct comisionE FROM empleados;
-SELECT nomEmp,salEmp,(salEmp+ 500000) AS 'Pago Estimado' FROM empleados WHERE codDepto='3000' ORDER BY nomEmp;
+/*10.Obtener el valor total a pagar que resulta de sumar a los empleados del departamento 3000 una
+bonificación de 500.000, en orden alfabético del empleado*/
+SELECT nomEmp,salEmp,(salEmp+ 500000) AS 'Pago Estimado' FROM empleados 
+WHERE codDepto='3000' ORDER BY nomEmp;
+--11.Obtener la lista de los empleados que ganan una comisión superior a su sueldo.
 SELECT nomEmp,comisionE FROM empleados WHERE comisionE>salEmp;
+--12.Listar los empleados cuya comisión es menor o igual que el 30% de su sueldo.
+SELECT nomEmp,comisionE FROM empleados WHERE comisionE<=(salEmp*0.3); 
+/*13.Elabore un listado donde para cada fila, figure ‘Nombre’ y ‘Cargo’ 
+antes del valor respectivo para cada empleado.*/
+SELECT nomEmp AS 'Nombre' , cargoE AS 'Cargo' FROM empleados;
+/*14. Hallar el salario y la comisión de aquellos empleados cuyo número de documento de identidad es
+superior al '19.709.802'*/
+SELECT nDIEmp ,nomEmp,salEmp,comisionE FROM empleados WHERE nDIEmp > '19.709.802';
+/*15. Muestra los empleados cuyo nombre empiece entre las letras J y Z (rango).
+Liste estos empleados y su cargo por orden alfabético.*/
+SELECT nomEmp ,cargoE FROM empleados WHERE lower(nomEmp) > 'j' AND lower(nomEmp) <'z' ORDER BY nomEmp DESC;
+/*16. Listar el salario, la comisión, el salario total (salario + comisión), documento de identidad del
+empleado y nombre, de aquellos empleados que tienen comisión superior a 1.000.000, ordenar el
+informe por el número del documento de identidad*/
+SELECT nDIEmp,nomEmp,salEmp,comisionE, (salEmp+comisionE) AS 'Salario Total' FROM empleados 
+WHERE comisionE > '1000000' ORDER BY nDIEmp; 
+--17. Obtener un listado similar al anterior, pero de aquellos empleados que NO tienen comisión
+SELECT nDIEmp,nomEmp,salEmp,comisionE, (salEmp+comisionE) AS 'Salario Total' FROM empleados 
+WHERE comisionE = 0 ORDER BY nDIEmp; 
+--18. Hallar los empleados cuyo nombre no contiene la cadena "MA"
+SELECT nomEmp FROM empleados WHERE lower(nomEmp) not like '%ma%'; 
+/*19. Obtener los nombres de los departamentos que no sean “Ventas” ni “Investigación” NI
+'MANTENIMIENTO', ordenados por ciudad.*/
+SELECT nombreDpto,ciudad From departamentos 
+WHERE lower(nombreDpto) not IN('Ventas','Investigación','MANTENIMIENTO') ORDER BY ciudad;
+/*20. Obtener el nombre y el departamento de los empleados con cargo 'Secretaria' o 'Vendedor', que
+no trabajan en el departamento de “PRODUCCION”, cuyo salario es superior a $1.000.000,
+ordenados por fecha de incorporación.*/
+SELECT e.nomEmp,d.nombreDpto FROM empleados e, departamentos d 
+WHERE e.codDepto=d.codDepto AND  lower(e.cargoE)='Secretaria' AND lower(e.cargoE)='Vendedor'
+AND lower(d.nombreDpto) <> 'PRODUCCION' AND e.salEmp > 1000000
+ORDER BY e.fecIncorporacion;
+--21. Obtener información de los empleados cuyo nombre tiene exactamente 11 caracteres
+SELECT nomEmp FROM empleados WHERE len(nomEmp)=11;
+--22. Obtener información de los empleados cuyo nombre tiene al menos 11 caracteres
+SELECT nomEmp FROM empleados WHERE len(nomEmp)<11;
+/*23. Listar los datos de los empleados cuyo nombre inicia por la letra 'M', 
+su salario es mayor a $800.000 o reciben comisión y trabajan para el departamento de 'VENTAS'*/
+SELECT e.nomEmp,e.salEmp,d.nombreDpto 
+FROM empleados e , departamentos d 
+WHERE e.codDepto=d.codDepto AND lower(e.nomEmp) like 'm%' AND (e.salEmp > '800000' OR e.comisionE>0)
+AND d.nombreDpto<>'ventas';
+/*24. Obtener los nombres, salarios y comisiones de los empleados que reciben un salario situado entre la
+mitad de la comisión la propia comisión*/
+SELECT nomEmp, salEmp, comisionE FROM empleados
+WHERE salEmp BETWEEN (comisionE/2) AND comisionE;
+--25. Mostrar el salario más alto de la empresa.
+SELECT  max(salEmp) AS 'Salario Maximo' FROM empleados
+--26. Mostrar cada una de las comisiones y el número de empleados que las reciben. Solo si tiene comision.
+SELECT comisionE, count(*) AS 'Num_Empleados'FROM empleados
+GROUP BY comisionE
+HAVING comisionE>0;
+--27. Mostrar el nombre del último empleado de la lista por orden alfabético.
+SELECT max(nomEmp) AS 'Mayor Alfabeticamente' FROM empleados;
+--28. Hallar el salario más alto, el más bajo y la diferencia entre ellos.
+SELECT max(salEmp) AS 'Salario Maximo', min(salEmp) AS 'Salario Minimo' 
+, max(salEmp)-min(salEmp) AS 'Diferencia'
+FROM empleados;
+--29. Mostrar el número de empleados de sexo femenino y de sexo masculino, por departamento.
+SELECT e.sexEmp, d.nombreDpto, count(*) FROM empleados e, departamentos d
+GROUP BY d.nombreDpto, e.sexEmp;
+--30. Hallar el salario promedio por departamento.
+SELECT codDepto, avg(salEmp) FROM empleados
+GROUP BY codDepto;
+/*31. Mostrar la lista de los empleados cuyo salario es mayor o igual que el promedio de la empresa.
+Ordenarlo por departamento.*/
+SELECT nDIEmp,salEmp FROM empleados
+WHERE salEmp >=(SELECT avg(salEmp) FROM empleados) 
+/*32. Hallar los departamentos que tienen más de tres empleados. Mostrar el número de empleados de
+esos departamentos.*/
