@@ -148,7 +148,8 @@ SELECT max(salEmp) AS 'Salario Maximo', min(salEmp) AS 'Salario Minimo'
 , max(salEmp)-min(salEmp) AS 'Diferencia'
 FROM empleados;
 --29. Mostrar el número de empleados de sexo femenino y de sexo masculino, por departamento.
-SELECT e.sexEmp, d.nombreDpto, count(*) FROM empleados e, departamentos d
+SELECT e.sexEmp, d.nombreDpto, count(*) AS 'Cantidad_Genero_M/F'
+FROM empleados e, departamentos d
 GROUP BY d.nombreDpto, e.sexEmp;
 --30. Hallar el salario promedio por departamento.
 SELECT codDepto, avg(salEmp) FROM empleados
@@ -156,6 +157,33 @@ GROUP BY codDepto;
 /*31. Mostrar la lista de los empleados cuyo salario es mayor o igual que el promedio de la empresa.
 Ordenarlo por departamento.*/
 SELECT nDIEmp,salEmp FROM empleados
-WHERE salEmp >=(SELECT avg(salEmp) FROM empleados) 
+WHERE salEmp >=(SELECT avg(salEmp) FROM empleados);
 /*32. Hallar los departamentos que tienen más de tres empleados. Mostrar el número de empleados de
 esos departamentos.*/
+SELECT d.codDepto, d.nombreDpto, count(*) AS 'Num Empleados'
+FROM departamentos d, empleados e
+WHERE d.codDepto=e.codDepto
+GROUP BY d.codDepto
+HAVING count (*) >=3;
+/*33. Mostrar el código y nombre de cada jefe, junto al número de empleados que dirige. 
+Solo los que tengan mas de dos empleados (2 incluido)*/
+SELECT j.nDIEmp,j.nomEmp, count(*) AS 'Num Empleados'
+FROM empleados e, empleados j
+WHERE e.jefeID=j.nDIEmp
+GROUP BY j.nomEmp
+HAVING count(*)>=2
+ORDER BY count(*) desc;
+--34. Hallar los departamentos que no tienen empleados
+SELECT d.codDepto, d.nombreDpto, count(*) AS 'Num Empleados'
+FROM departamentos d , empleados e
+WHERE d.codDepto=e.codDepto
+GROUP BY d.codDepto
+HAVING count(*)=0;
+--35. Mostrar el nombre del departamento cuya suma de salarios sea la más alta, indicando el valor de la suma.
+SELECT d.nombreDpto, sum(e.salEmp) AS 'Suma SALARIO'
+FROM departamentos d, empleados e
+WHERE d.codDepto=e.codDepto
+GROUP BY d.nombreDpto
+ORDER BY sum(e.salEmp) DESC;
+
+
