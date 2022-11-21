@@ -5685,3 +5685,66 @@ GROUP BY t.nombre
 SELECT m.nombre, mes.probabilidad  FROM movimiento m, movimiento_efecto_secundario mes, efecto_secundario es
 WHERE m.id_movimiento=mes.id_movimiento AND mes.id_efecto_secundario=es.id_efecto_secundario
 AND lower(es.efecto_secundario) LIKE '%envenena%';
+--11. Mostrar todos los movimientos que aprende pikachu.
+SELECT DISTINCT  m.nombre AS Movimento FROM movimiento m, pokemon p, pokemon_movimiento_forma pmf
+WHERE p.numero_pokedex=pmf.numero_pokedex 
+AND pmf.id_movimiento=m.id_movimiento
+AND lower(p.nombre) ='pikachu';
+--12. Mostrar todos los movimientos que aprende pikachu por MT.
+SELECT DISTINCT  m.nombre AS Movimento FROM movimiento m, pokemon p, pokemon_movimiento_forma pmf, 
+forma_aprendizaje fa, tipo_forma_aprendizaje tfa
+WHERE p.numero_pokedex=pmf.numero_pokedex 
+AND pmf.id_movimiento=m.id_movimiento
+AND pmf.id_forma_aprendizaje = fa.id_forma_aprendizaje
+AND fa.id_tipo_aprendizaje = tfa.id_tipo_aprendizaje
+AND lower(tfa.tipo_aprendizaje)='mt'
+AND lower(p.nombre) ='pikachu';
+--13. Mostrar todos los movimientos de tipo normal que aprende pikachu por nivel.
+SELECT DISTINCT  m.nombre
+FROM movimiento m, pokemon p, 
+pokemon_movimiento_forma pmf, 
+forma_aprendizaje fa, 
+tipo_forma_aprendizaje tfa,
+tipo t
+WHERE p.numero_pokedex = pmf.numero_pokedex 
+AND pmf.id_movimiento = m.id_movimiento
+AND pmf.id_forma_aprendizaje = fa.id_forma_aprendizaje
+AND fa.id_tipo_aprendizaje = tfa.id_tipo_aprendizaje
+AND m.id_tipo = t.id_tipo
+AND lower(t.nombre) = 'normal'
+AND lower(tfa.tipo_aprendizaje) = 'nivel'
+AND lower(p.nombre) = 'pikachu';
+--14. Mostrar todos los pokemon que evolucionan por piedra. Hacer una vista de ello.
+CREATE or replace VIEW pokemon_evolucion_piedra AS
+SELECT DISTINCT p.numero_pokedex, p.nombre
+FROM pokemon p, pokemon_forma_evolucion pfe, 
+forma_evolucion fe, tipo_evolucion te
+WHERE p.numero_pokedex = pfe.numero_pokedex 
+AND pfe.id_forma_evolucion = fe.id_forma_evolucion
+AND fe.tipo_evolucion = te.id_tipo_evolucion
+AND lower(te.tipo_evolucion) = 'piedra';
+
+SELECT * FROM pokemon_evolucion_piedra;
+--15. Mostrar todos los pokemon que no pueden evolucionar. Hacer una vista de ello.
+CREATE or replace VIEW pokemon_no_evolucionan AS
+SELECT p.numero_pokedex, p.nombre
+FROM pokemon p, evoluciona_de ev
+WHERE p.numero_pokedex = ev.pokemon_evolucionado
+AND not exists (SELECT pokemon_origen FROM evoluciona_de WHERE pokemon_origen = p.numero_pokedex)
+UNION
+SELECT p.numero_pokedex, p.nombre
+FROM pokemon p
+WHERE not exists (SELECT * 
+					FROM evoluciona_de 
+					WHERE pokemon_origen = p.numero_pokedex or pokemon_evolucionado = p.numero_pokedex);
+                    
+SELECT * FROM pokemon_no_evolucionan;
+--16. Mostrar la cantidad de los pokemon de cada tipo. Hacer una vista de ello.
+CREATE or replace VIEW cantidad_tipo_pokemon AS
+SELECT t.nombre AS tipo, count(*) AS cantidad
+FROM pokemon p, pokemon_tipo pt, tipo t
+WHERE p.numero_pokedex = pt.numero_pokedex
+AND pt.id_tipo = t.id_tipo
+GROUP BY t.nombre;
+
+SELECT * FROM cantidad_tipo_pokemon;
