@@ -5661,3 +5661,27 @@ WHERE p.numero_pokedex=evo.pokemon_origen
 AND evo.pokemon_evolucionado = (SELECT numero_pokedex
 								FROM pokemon
 								WHERE lower (nombre)='arbok')
+--7. Mostrar aquellos pokemon que evolucionan por intercambio.
+SELECT p.nombre FROM pokemon_forma_evolucion pfe, tipo_evolucion te, forma_evolucion fe, pokemon p
+WHERE p.numero_pokedex=pfe.numero_pokedex 
+AND pfe.id_forma_evolucion=fe.id_forma_evolucion 
+AND fe.tipo_evolucion=te.id_tipo_evolucion 
+AND lower(te.tipo_evolucion)='Intercambio';
+--8. Mostrar el nombre del movimiento con mas prioridad.
+SELECT nombre FROM movimiento mov
+WHERE prioridad=(SELECT max(prioridad) FROM movimiento);
+--9. Mostrar el pokemon mas pesado.
+SELECT nombre,peso FROM pokemon
+WHERE peso=(SELECT max(peso) FROM pokemon);
+--10. Mostrar el nombre y tipo del ataque con mas potencia.
+SELECT m.nombre AS movimiento, t.nombre AS tipo, m.potencia AS potencia  FROM movimiento m, tipo t
+WHERE m.id_tipo=t.id_tipo 
+AND m.potencia=(SELECT max(potencia) FROM movimiento);
+--11. Mostrar el numero de movimientos de cada tipo.
+SELECT t.nombre AS tipo, count(*) AS num_mov FROM tipo t, movimiento m
+WHERE m.id_tipo=t.id_tipo
+GROUP BY t.nombre
+--12. Mostrar todos los movimientos que puedan envenenar.
+SELECT m.nombre, mes.probabilidad  FROM movimiento m, movimiento_efecto_secundario mes, efecto_secundario es
+WHERE m.id_movimiento=mes.id_movimiento AND mes.id_efecto_secundario=es.id_efecto_secundario
+AND lower(es.efecto_secundario) LIKE '%envenena%';
