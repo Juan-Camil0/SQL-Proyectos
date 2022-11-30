@@ -1,6 +1,6 @@
 ﻿CREATE DATABASE jardineria 
 
-
+SELECT * FROM oficina
 CREATE TABLE oficina (
   codigo_oficina VARCHAR(10) NOT NULL,
   ciudad VARCHAR(30) NOT NULL,
@@ -923,26 +923,34 @@ INSERT INTO pago VALUES (35,'PayPal','ak-std-000025','2007-10-06',3321);
 INSERT INTO pago VALUES (38,'PayPal','ak-std-000026','2006-05-26',1171);
 
 --Devuelve un listado con el código de oficina y la ciudad donde hay oficinas.
-
+SELECT codigo_oficina,ciudad FROM oficina;
 --Devuelve un listado con la ciudad y el teléfono de las oficinas de España.
-
+SELECT ciudad,telefono From oficina
+WHERE pais=lower('españa');
 --Devuelve un listado con el nombre, apellidos y email de los empleados cuyo jefe tiene un código de jefe igual a 7.
-
+SELECT nombre,apellido1,apellido2,email FROM empleado
+WHERE codigo_jefe='7';
 --Devuelve el nombre del puesto, nombre, apellidos y email del jefe de la empresa.
-
+SELECT puesto,nombre,apellido1,apellido2,email FROM empleado
+WHERE puesto=lower('Director oficina');
 --Devuelve un listado con el nombre, apellidos y puesto de aquellos empleados que no sean representantes de ventas.
-
+SELECT nombre,apellido1,apellido2 FROM empleado
+WHERE puesto <> lower('representante ventas');
 --Devuelve un listado con el nombre de los todos los clientes españoles.
-
+SELECT nombre_cliente FROM cliente
+WHERE pais=lower('spain');
 --Devuelve un listado con los distintos estados por los que puede pasar un pedido.
-
+SELECT estado FROM pedido;
 /*Devuelve un listado con el código de cliente de aquellos clientes que realizaron algún pago en 2008.
 Tenga en cuenta que deberá eliminar aquellos códigos de cliente que aparezcan repetidos. 
 Resuelva la consulta:
 Utilizando la función YEAR de MySQL.
 Utilizando la función DATE_FORMAT de MySQL.
 Sin utilizar ninguna de las funciones anteriores.*/
-
+------La función EXTRACT() extrae una parte de una fecha determinada.
+SELECT * FROM cliente
+SELECT DISTINCT codigo_cliente FROM cliente
+WHERE extract (year 
 --Devuelve un listado con el código de pedido, código de cliente, fecha esperada y fecha de entrega de los pedidos que no han sido entregados a tiempo.
 
 /*Devuelve un listado con el código de pedido, código de cliente, fecha esperada y fecha de entrega de los pedidos cuya fecha de entrega ha sido al menos dos días antes de la fecha esperada.
