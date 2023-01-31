@@ -5,7 +5,7 @@ SELECT * FROM Empresas;
 
 /*Se requiere obtener los siguientes resultados.
 1. Una tabla que muestre cuantos Afiliados hay por empresa. 
-Esta tabla debe estar acompañada de la metodología con la que obtuvo la tabla. 
+Esta tabla debe estar acompaÃ±ada de la metodologÃ­a con la que obtuvo la tabla. 
 Preferiblemente la query en SQL Server*/
 
 SELECT DISTINCT NUM_IDENTIFICACION_EMPRESA,count(TIP_IDENTIFICACION_AFILIADO) AS Afiliado FROM Afiliados 
@@ -20,7 +20,7 @@ ORDER BY EDAD DESC; -- Saber la mayor edad de los afiliados
 SELECT FEC_NACIMIENTO  FROM afiliados
 ORDER BY FEC_NACIMIENTO DESC;
 
---a. Clasificarlos por rangos de 5 años
+--a. Clasificarlos por rangos de 5 aÃ±os
 SELECT sum(CASE WHEN FEC_NACIMIENTO <= '1916-02-08' THEN 1	 ELSE 0 END) AS [debajo 5],
        sum(CASE WHEN FEC_NACIMIENTO between '1921-01-01' and '1926-01-01'THEN 1 ELSE 0 END) AS [entre 5-10],
        sum(CASE WHEN FEC_NACIMIENTO between '1926-01-01' and '1931-01-01' THEN 1 ELSE 0 END) AS [entre 10-15],
@@ -58,10 +58,21 @@ FROM Afiliados
 
 --c. Mencionar el porcentaje de cada rango respecto al total de afiliados
 SELECT * FROM Afiliados;
-/*3. Las Empresas y aportantes realizan unos aportes para su afiliación, 
+/*3. Las Empresas y aportantes realizan unos aportes para su afiliaciÃ³n, 
 por favor identifique cuales son los municipios con mayor cantidad de aportes. 
 A su vez, mencione el porcentaje de aportes por cada municipio.*/
 
 SELECT COD_MUNICIPIO_DANE,TIP_APORTANTE, max(APO_TOTAL_MENSUAL) AS Aporte_Maximo FROM Empresas
 GROUP BY COD_MUNICIPIO_DANE,TIP_APORTANTE, APO_TOTAL_MENSUAL
 ORDER BY APO_TOTAL_MENSUAL ASC
+
+
+otra posiblidad 
+--c. Mencionar el porcentaje de cada rango respecto al total de afiliados
+SELECT sum(try_convert(INT,TIP_IDENTIFICACION_AFILIADO)) AS RangoDeAfiliados FROM Afiliados
+WHERE  TIP_IDENTIFICACION_AFILIADO=1
+group by TIP_IDENTIFICACION_AFILIADO
+order by TIP_IDENTIFICACION_AFILIADO desc;
+---
+SELECT SUM(try_convert(INT,TIP_IDENTIFICACION_AFILIADO)) AS RangoDeAfiliados FROM Afiliados 
+GROUP BY TIP_IDENTIFICACION_AFILIADO
